@@ -1,26 +1,18 @@
-from asyncore import write
+import string
 from pdf2image import convert_from_bytes, convert_from_path
-from time import sleep
 from PIL import Image
 import pytesseract
 import sys
 import os
-
-# Print things in "one single line"
-def print_same_line(text):
-  sys.stdout.write('\r')
-  sys.stdout.flush()
-  sys.stdout.write(text)
-  sys.stdout.flush()
 
 # Path to the pdf
 path_files = r"/home/evil-twin/Projects/pdf2text/files/"
 # List pdf files in folder
 folder = os.listdir(path_files)
 
+# Converting pdf to image
 print("Capturando arquivos.")
 
-# Converting pdf to image
 for pdf in folder: 
   # Count the pages will be stracted later
   image_count = 1
@@ -34,8 +26,6 @@ for pdf in folder:
     pdf_splited_name = pdf[0:-4]
     
     print("Processando arquivo: \"{}\".\r".format(pdf_splited_name))
-
-    sleep(1)
 
     # Check if already have folder with this file name
     folder_exist = os.path.exists(temp_path_files + pdf_splited_name)
@@ -64,17 +54,17 @@ for pdf in folder:
       else:
         print("Por favor responda com \"s\" para Sim ou \"n\" para Não.")
         user_input = input("Deseja continuar? (s/n): ")
+    
+    print("Convertendo pdf para imagem...\r")
         
     # Get PDF path for each file in folder "files"  
     pdf_path = path_files + pdf
     
     # Convert each PDF page to ppm
-    pdf_convert = convert_from_path(pdf_path,size=800)
+    # Put an large size to increase the marge of text error
+    pdf_convert = convert_from_path(pdf_path,size=1200)
 
     # Loop to save img of each page and save in folder
-    print_same_line("Convertendo pdf para imagem...\r")
-    sleep(1)
-
     print("Salvando páginas como imagem...")
 
     for page in pdf_convert:
@@ -86,7 +76,44 @@ for pdf in folder:
       
       image_count = image_count +1
 
-sys.stdout.write("clear")
-sys.stdout.flush()
+############# Starts extract text from images #############
+
+print("Preparando para extrair texto.")
+
+# List directory folder with the folders imgs
+imgs_folder = os.listdir("/home/evil-twin/Projects/pdf2text/files/temp/")
+# Path for the directories with imgs
+imgs_path = "/home/evil-twin/Projects/pdf2text/files/temp/"
+# Removing extracted text folder from list
+imgs_folder.remove("extracted_text")
+
+# Loop with the listed image files in each folder
+for content in imgs_folder:
+  # Path to each img inside the folder
+  img_path = "{}{}/".format(imgs_path, content)
+  # Listing imgs in folder
+  imgsArray = os.listdir(img_path)
+  
+  # Loop with each img element
+  for img in imgsArray:
+    # Read the text from image
+    text = str(pytesseract.image_to_string(Image.open(img_path + img)))
+    
+    # Giving a name for new txt file
+    text_file_name = img + ".txt"
+
+    # Check if already have folder with this file name
+    folder_exist = os.path.exists(imgs_path + "extracted_text/" + pdf_splited_name )
+
+    if(folder_exist == False):
+      # Create temporary folder for this file
+      os.mkdir(imgs_path + "extracted_text/" + pdf_splited_name)
+
+    # Path to seve new txt file
+    text_file_path_save = imgs_path + "extracted_text/" + pdf_splited_name + text_file_name
+    
+    # Creating and saving txt file
+    with open(text_file_path_save, 'x') as new_file:
+      new_file.write(text)
 
 print("\nConcluído!\r")

@@ -1,4 +1,5 @@
-#pdf2text
+####pdf2text
+
 ~~Still doesn't convert to text but this is the idea~~
 
 *Now it does convert!*

@@ -1,8 +1,6 @@
-import string
-from pdf2image import convert_from_bytes, convert_from_path
+from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
-import sys
 import os
 
 # Path to the pdf
@@ -78,17 +76,18 @@ for pdf in folder:
 
 ############# Starts extract text from images #############
 
-print("Preparando para extrair texto.")
 
 # List directory folder with the folders imgs
 imgs_folder = os.listdir("/home/evil-twin/Projects/pdf2text/files/temp/")
 # Path for the directories with imgs
 imgs_path = "/home/evil-twin/Projects/pdf2text/files/temp/"
 # Removing extracted text folder from list
-imgs_folder.remove("extracted_text")
+imgs_folder.remove("extracted_text") 
 
 # Loop with the listed image files in each folder
 for content in imgs_folder:
+  print("Extraindo texto de {}...".format(content))
+  
   # Path to each img inside the folder
   img_path = "{}{}/".format(imgs_path, content)
   # Listing imgs in folder
@@ -103,14 +102,14 @@ for content in imgs_folder:
     text_file_name = img + ".txt"
 
     # Check if already have folder with this file name
-    folder_exist = os.path.exists(imgs_path + "extracted_text/" + pdf_splited_name )
+    folder_exist = os.path.exists(imgs_path + "extracted_text/" + content )
 
     if(folder_exist == False):
       # Create temporary folder for this file
-      os.mkdir(imgs_path + "extracted_text/" + pdf_splited_name)
+      os.mkdir(imgs_path + "extracted_text/" + content)
 
     # Path to seve new txt file
-    text_file_path_save = imgs_path + "extracted_text/" + pdf_splited_name + text_file_name
+    text_file_path_save = imgs_path + "extracted_text/" + content + "/" + text_file_name
     
     # Creating and saving txt file
     with open(text_file_path_save, 'x') as new_file:

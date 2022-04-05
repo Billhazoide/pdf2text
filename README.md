@@ -10,7 +10,7 @@ done by itself, with exception of exclusion of the images converted (files/temp/
 
 
 
-A few updates incoming like:
+#### A few updates incoming like:
 - Delete pdf document after all the process.
 - Adition of error handlers.
 - Savin files outside the project.

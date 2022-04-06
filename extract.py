@@ -2,9 +2,16 @@ from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 import os
+import sys
+
+def print_same_line(text):
+  sys.stdout.write('\r')
+  sys.stdout.flush()
+  sys.stdout.write(text)
+  # sys.stdout.flush()
 
 # Path to the pdf
-path_files = r"/home/evil-twin/Projects/pdf2text/files/"
+path_files = os.getcwd() + "/files/"
 # List pdf files in folder
 folder = os.listdir(path_files)
 
@@ -59,8 +66,8 @@ for pdf in folder:
     pdf_path = path_files + pdf
     
     # Convert each PDF page to ppm
-    # Put an large size to increase the marge of text error
-    pdf_convert = convert_from_path(pdf_path,size=1200)
+    # Put an large size to decrease the marge of text error
+    pdf_convert = convert_from_path(pdf_path,size=2000)
 
     # Loop to save img of each page and save in folder
     print("Salvando páginas como imagem...")
@@ -74,20 +81,19 @@ for pdf in folder:
       
       image_count = image_count +1
 
-############# Starts extract text from images #############
-
+# ############# Starts extract text from images #############
 
 # List directory folder with the folders imgs
-imgs_folder = os.listdir("/home/evil-twin/Projects/pdf2text/files/temp/")
+imgs_folder = os.listdir(os.getcwd() + "/files/temp/")
 # Path for the directories with imgs
-imgs_path = "/home/evil-twin/Projects/pdf2text/files/temp/"
+imgs_path = os.getcwd() + "/files/temp/"
 # Removing extracted text folder from list
 imgs_folder.remove("extracted_text") 
 
 # Loop with the listed image files in each folder
 for content in imgs_folder:
-  print("Extraindo texto de {}...".format(content))
-  
+  print("Extraindo texto de \"{}\"...".format(content))
+
   # Path to each img inside the folder
   img_path = "{}{}/".format(imgs_path, content)
   # Listing imgs in folder
@@ -98,8 +104,16 @@ for content in imgs_folder:
     # Read the text from image
     text = str(pytesseract.image_to_string(Image.open(img_path + img)))
     
+    # Remove the ".jpg" from the name
+    img_sliced_name = img[0:-4]
+
     # Giving a name for new txt file
-    text_file_name = img + ".txt"
+    text_file_name = img_sliced_name + ".txt"
+
+    # Formating terminal display name
+    new_img_name = img_sliced_name.replace("-","  ")
+    
+    print_same_line("Página: {}".format(new_img_name[-3:]))
 
     # Check if already have folder with this file name
     folder_exist = os.path.exists(imgs_path + "extracted_text/" + content )

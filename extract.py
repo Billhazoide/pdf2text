@@ -93,8 +93,8 @@ class Main:
           
           image_count = image_count +1
 
-      # else:
-      #   return print("Nenhum arquivo cadidato a conversão,\ninsira um documento \".pdf\" na pasta \"files\"\n")
+      else:
+        return print("Nenhum arquivo cadidato a conversão,\ninsira um documento na pasta \"files\".\nVerificando em 30s.")
   
     # Remove all items from converted pdfs array
     # converted_pdf_arr.clear()
